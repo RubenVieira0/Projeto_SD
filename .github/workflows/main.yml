@@ -15,15 +15,27 @@ jobs:
     - name: Login to DockerHub
       uses: docker/login-action@v1
       with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        username: ${{ secrets.USER }}
+        password: ${{ secrets.PASSWD }}
     
     - name: Build and push Docker images
       run: |
-        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/aks-store-api:${{ github.sha }} ./src/api
-        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/aks-store-ui:${{ github.sha }} ./src/ui
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/aks-store-api:${{ github.sha }}
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/aks-store-ui:${{ github.sha }}
+        docker build -t ${{ secrets.USER }}/ai-service:${{ github.sha }} ./src/ai-service
+        docker build -t ${{ secrets.USER }}/makeline-service:${{ github.sha }} ./src/makeline-service
+        docker build -t ${{ secrets.USER }}/order-service:${{ github.sha }} ./src/order-service
+        docker build -t ${{ secrets.USER }}/product-service:${{ github.sha }} ./src/product-service
+        docker build -t ${{ secrets.USER }}/store-admin:${{ github.sha }} ./src/store-admin
+        docker build -t ${{ secrets.USER }}/store-front:${{ github.sha }} ./src/store-front
+        docker build -t ${{ secrets.USER }}/virtual-customer:${{ github.sha }} ./src/virtual-customer
+        docker build -t ${{ secrets.USER }}/virtual-worker:${{ github.sha }} ./src/virtual-worker
+        docker push ${{ secrets.USER }}/ai-service:${{ github.sha }}
+        docker push ${{ secrets.USER }}/makeline-service:${{ github.sha }}
+        docker push ${{ secrets.USER }}/order-service:${{ github.sha }}
+        docker push ${{ secrets.USER }}/product-service:${{ github.sha }}
+        docker push ${{ secrets.USER }}/store-admin:${{ github.sha }}
+        docker push ${{ secrets.USER }}/store-front:${{ github.sha }}
+        docker push ${{ secrets.USER }}/virtual-customer:${{ github.sha }}
+        docker push ${{ secrets.USER }}/virtual-worker:${{ github.sha }}
             
             
     
