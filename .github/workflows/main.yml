@@ -36,6 +36,20 @@ jobs:
         docker push ${{ secrets.USER }}/store-front:${{ github.sha }}
         docker push ${{ secrets.USER }}/virtual-customer:${{ github.sha }}
         docker push ${{ secrets.USER }}/virtual-worker:${{ github.sha }}
+      
+    - name: Update Kubernetes manifests
+      run: |
+        for service in ai-service makeline-service order-service product-service store-admin store-front virtual-customer virtual-worker; do
+          sed -i 's|image: .*'${service}'.*|image: ${{ secrets.USER }}/'${service}':${{ github.sha }}|' ./k8s/${service}-deployment.yaml
+        done
+
+    - name: Commit and push if there are changes
+      run: |
+        git config --global user.email "github-actions@github.com"
+        git config --global user.name "GitHub Actions"
+        git add .
+        git commit -m "Update image tags" || exit 0
+        git push
             
             
     
