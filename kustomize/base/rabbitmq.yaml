@@ -25,7 +25,7 @@ spec:
         "kubernetes.io/os": linux
       containers:
       - name: rabbitmq
-        image: mcr.microsoft.com/mirror/docker/library/rabbitmq:3.10-management-alpine
+        image: 2030518/rabbitmq:65e380936f69d4bebd6041f2c9294d2ad4e2b2c4
         ports:
         - containerPort: 5672
           name: rabbitmq-amqp
