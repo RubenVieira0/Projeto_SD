@@ -19,28 +19,23 @@ jobs:
         password: ${{ secrets.PASSWD }}
     
     - name: Build and push Docker images
+      env:
+        DOCKER_USERNAME: ${{ secrets.USER }}
+        IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker build -t ${{ secrets.USER }}/ai-service:${{ github.sha }} ./src/ai-service
-        docker build -t ${{ secrets.USER }}/makeline-service:${{ github.sha }} ./src/makeline-service
-        docker build -t ${{ secrets.USER }}/order-service:${{ github.sha }} ./src/order-service
-        docker build -t ${{ secrets.USER }}/product-service:${{ github.sha }} ./src/product-service
-        docker build -t ${{ secrets.USER }}/store-admin:${{ github.sha }} ./src/store-admin
-        docker build -t ${{ secrets.USER }}/store-front:${{ github.sha }} ./src/store-front
-        docker build -t ${{ secrets.USER }}/virtual-customer:${{ github.sha }} ./src/virtual-customer
-        docker build -t ${{ secrets.USER }}/virtual-worker:${{ github.sha }} ./src/virtual-worker
-        docker push ${{ secrets.USER }}/ai-service:${{ github.sha }}
-        docker push ${{ secrets.USER }}/makeline-service:${{ github.sha }}
-        docker push ${{ secrets.USER }}/order-service:${{ github.sha }}
-        docker push ${{ secrets.USER }}/product-service:${{ github.sha }}
-        docker push ${{ secrets.USER }}/store-admin:${{ github.sha }}
-        docker push ${{ secrets.USER }}/store-front:${{ github.sha }}
-        docker push ${{ secrets.USER }}/virtual-customer:${{ github.sha }}
-        docker push ${{ secrets.USER }}/virtual-worker:${{ github.sha }}
+        services=(ai-service makeline-service order-service product-service store-admin store-front virtual-customer virtual-worker)
+        for service in "${services[@]}"; do
+          docker build -t $DOCKER_USERNAME/${service}:$IMAGE_TAG ./src/${service}
+          docker push $DOCKER_USERNAME/${service}:$IMAGE_TAG
+        done
       
     - name: Update Kubernetes manifests
       run: |
-        for service in ai-service makeline-service order-service product-service store-admin store-front virtual-customer virtual-worker; do
-          sed -i 's|image: .*'${service}'.*|image: ${{ secrets.USER }}/'${service}':${{ github.sha }}|' ./k8s/${service}-deployment.yaml
+        services=(kustomization makeline-service mongodb order-service product-service rabbitmq store-admin store-front virtual-customer)
+        for service in "${services[@]}"; do
+          if [ -f "./kustomize/base/${service}.yaml" ]; then
+            sed -i 's|image: .*'${service}'.*|image: ${{ secrets.USER }}/'${service}':${{ github.sha }}|' ./kustomize/base/${service}.yaml
+          fi
         done
 
     - name: Commit and push if there are changes
