@@ -16,7 +16,7 @@ spec:
         "kubernetes.io/os": linux
       containers:
       - name: store-admin
-        image: ${{ secrets.USER }}/store-admin:${{ github.sha }}
+        image: 2030518/store-admin:65e380936f69d4bebd6041f2c9294d2ad4e2b2c4
         ports:
         - containerPort: 8081
           name: store-admin
