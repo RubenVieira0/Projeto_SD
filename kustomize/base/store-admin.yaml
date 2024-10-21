@@ -16,7 +16,7 @@ spec:
         "kubernetes.io/os": linux
       containers:
       - name: store-admin
-        image: 2030518/store-admin:65e380936f69d4bebd6041f2c9294d2ad4e2b2c4
+        image: 2030518/store-admin:25e6b538f85bd44b4b4b8c105b34282c9b779988
         ports:
         - containerPort: 8081
           name: store-admin
